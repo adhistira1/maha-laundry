@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Maha Laundry POS</title><link rel="stylesheet" href="style.css">
+</head>
+<body>
+<div id="login-view" class="login-wrap">
+  <form id="login-form" class="login-card">
+    <div class="logo">🫧</div><p class="eyebrow">LAUNDRY MANAGEMENT SYSTEM</p><h1>Maha Laundry</h1><p class="muted">Silakan masuk ke akun Anda</p>
+    <label>Username<input id="username" required autocomplete="username" placeholder="Masukkan username"></label>
+    <label>Password<input id="password" type="password" required autocomplete="current-password" placeholder="Masukkan password"></label>
+    <button class="btn primary full" type="submit">Login</button><p id="login-error" class="error"></p>
+  </form>
+</div>
+<div id="app-view" class="app hidden">
+  <aside class="sidebar">
+    <div class="brand"><span>🫧</span><div><b>Maha Laundry</b><small>POINT OF SALE</small></div></div>
+    <nav>
+      <button data-page="dashboard" class="nav active">▦ Dashboard</button>
+      <button data-page="kasir" class="nav">＋ Kasir Baru</button>
+      <button data-page="transaksi" class="nav">▤ Transaksi</button>
+      <button data-page="harga" class="nav admin-only">♧ Pengaturan Harga</button>
+      <button data-page="laporan" class="nav admin-only">▥ Laporan</button>
+      <button data-page="pengguna" class="nav admin-only">♙ Pengguna</button>
+    </nav>
+    <div class="user-box"><span id="user-name"></span><small id="user-role"></small><button id="logout" class="logout">Keluar ↗</button></div>
+  </aside>
+  <main class="main">
+    <header class="topbar"><div><p class="eyebrow">LAUNDRY MANAGEMENT SYSTEM</p><h1 id="page-title">Dashboard</h1></div><span id="today" class="muted"></span></header>
+
+    <section id="page-dashboard" class="page">
+      <div class="welcome"><div><h2>Ringkasan operasional</h2><p class="muted">Pantau transaksi dan pekerjaan laundry.</p></div><button class="btn primary" data-go="kasir">＋ Transaksi Baru</button></div>
+      <div class="stats">
+        <article class="stat"><span>Transaksi hari ini</span><b id="dash-orders">0</b></article>
+        <article class="stat"><span>Pendapatan hari ini</span><b id="dash-revenue">Rp0</b></article>
+        <article class="stat"><span>Sedang diproses</span><b id="dash-process">0</b></article>
+        <article class="stat"><span>Selesai</span><b id="dash-done">0</b></article>
+      </div>
+      <div class="panel"><div class="panel-head"><div><h3>Transaksi terbaru</h3><p class="muted">Data yang baru masuk.</p></div><button class="link" data-go="transaksi">Lihat semua →</button></div><div class="table-wrap"><table><thead><tr><th>Nota</th><th>Pelanggan</th><th>Total</th><th>Status</th></tr></thead><tbody id="recent-table"></tbody></table></div></div>
+    </section>
+
+    <section id="page-kasir" class="page">
+      <div class="intro"><h2>Buat transaksi</h2><p class="muted">Tambahkan satu atau beberapa layanan ke nota pelanggan.</p></div>
+      <div class="panel">
+        <form id="order-form">
+          <div class="form-grid">
+            <label>Nama pelanggan<input id="cust-name" required placeholder="Nama pelanggan"></label>
+            <label>Nomor WhatsApp<input id="cust-phone" required placeholder="08xxxxxxxxxx"></label>
+            <label>Estimasi selesai<input id="due-date" type="date"></label>
+            <label>Metode pembayaran<select id="payment"><option>Belum Dibayar</option><option>Tunai</option><option>Transfer</option><option>QRIS</option></select></label>
+          </div>
+          <div class="panel-subhead"><h3>Item layanan</h3><button type="button" class="btn light" id="add-item">＋ Tambah item</button></div>
+          <div id="items-list"></div>
+          <div class="form-grid"><label>Diskon (Rp)<input id="discount" type="number" min="0" value="0"></label><label>Catatan<textarea id="notes" rows="2" placeholder="Catatan khusus"></textarea></label></div>
+          <div class="total-row"><span>Total pembayaran</span><strong id="order-total">Rp0</strong></div>
+          <button class="btn primary" type="submit">Simpan Transaksi</button>
+        </form>
+      </div>
+    </section>
+
+    <section id="page-transaksi" class="page">
+      <div class="intro"><h2>Daftar transaksi</h2><p class="muted">Ubah status cucian. Ketika status menjadi Selesai, sistem mencoba mengirim WhatsApp otomatis.</p></div>
+      <div class="panel"><input id="order-search" class="search" placeholder="Cari nota, pelanggan, nomor WhatsApp..."><div class="table-wrap"><table><thead><tr><th>Nota / Tanggal</th><th>Pelanggan</th><th>Total</th><th>Status</th><th>Aksi</th></tr></thead><tbody id="orders-table"></tbody></table></div></div>
+    </section>
+
+    <section id="page-harga" class="page admin-only">
+      <div class="intro"><h2>Pengaturan harga layanan</h2><p class="muted">Hanya admin yang dapat menambah, mengubah, dan menghapus layanan.</p></div>
+      <div class="panel">
+        <h3 id="service-form-title">Tambah layanan</h3>
+        <form id="service-form" class="form-grid">
+          <label>Nama layanan<input id="service-name" required placeholder="Contoh: Cuci Setrika"></label>
+          <label>Kategori<select id="service-category"><option value="kiloan">Kiloan</option><option value="satuan">Satuan</option></select></label>
+          <label>Satuan<select id="service-unit"><option value="kg">Kilogram (kg)</option><option value="pcs">Pcs</option><option value="pasang">Pasang</option><option value="item">Item</option></select></label>
+          <label>Harga (Rp)<input id="service-price" type="number" min="0" step="0.01" required></label>
+          <label>Status layanan<select id="service-active"><option value="1">Aktif</option><option value="0">Nonaktif</option></select></label>
+          <div class="form-actions"><button id="service-submit" class="btn primary" type="submit">＋ Tambah layanan</button> <button id="service-cancel" class="btn light hidden" type="button">Batal</button></div>
+        </form>
+        <div class="table-wrap space-top"><table><thead><tr><th>Nama layanan</th><th>Kategori</th><th>Satuan</th><th>Harga</th><th>Status</th><th>Aksi</th></tr></thead><tbody id="services-table"></tbody></table></div>
+      </div>
+    </section>
+
+    <section id="page-laporan" class="page admin-only">
+      <div class="intro"><h2>Laporan pendapatan</h2><p class="muted">Pilih periode dan tanggal acuan laporan.</p></div>
+      <div class="panel">
+        <div class="toolbar"><select id="report-period"><option value="daily">Harian</option><option value="weekly">Mingguan</option><option value="monthly">Bulanan</option></select><input id="report-date" type="date"><button id="load-report" class="btn primary">Tampilkan</button></div>
+        <div class="stats report-stats"><article class="stat"><span>Jumlah transaksi</span><b id="report-orders">0</b></article><article class="stat"><span>Total pendapatan</span><b id="report-revenue">Rp0</b></article><article class="stat"><span>Pendapatan lunas</span><b id="report-paid">Rp0</b></article></div>
+        <div class="table-wrap"><table><thead><tr><th>Tanggal</th><th>Transaksi</th><th>Pendapatan</th></tr></thead><tbody id="report-table"></tbody></table></div>
+      </div>
+    </section>
+
+    <section id="page-pengguna" class="page admin-only">
+      <div class="intro"><h2>Manajemen pengguna</h2><p class="muted">Buat akun, lalu nonaktifkan akun yang tidak lagi digunakan. Riwayat transaksi tetap tersimpan.</p></div>
+      <div class="panel">
+        <form id="user-form" class="form-grid">
+          <label>Nama lengkap<input id="new-name" required></label><label>Username<input id="new-username" required></label>
+          <label>Password (min. 8 karakter)<input id="new-password" type="password" minlength="8" required></label>
+          <label>Role<select id="new-role"><option value="kasir">Kasir</option><option value="admin">Admin</option></select></label>
+          <div><button class="btn primary" type="submit">Buat akun</button></div>
+        </form>
+        <div class="table-wrap space-top"><table><thead><tr><th>Nama</th><th>Username</th><th>Role</th><th>Status</th><th>Aksi</th></tr></thead><tbody id="users-table"></tbody></table></div>
+      </div>
+    </section>
+  </main>
+</div>
+<div id="toast" class="toast"></div>
+<script src="app.js"></script>
+</body></html>
