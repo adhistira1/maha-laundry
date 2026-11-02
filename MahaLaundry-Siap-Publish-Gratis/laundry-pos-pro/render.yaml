@@ -1,0 +1,27 @@
+services:
+  - type: web
+    name: maha-laundry
+    runtime: node
+    plan: free
+    buildCommand: npm install
+    startCommand: npm start
+    healthCheckPath: /
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: JWT_SECRET
+        generateValue: true
+      - key: DB_HOST
+        sync: false
+      - key: DB_PORT
+        value: "4000"
+      - key: DB_USER
+        sync: false
+      - key: DB_PASSWORD
+        sync: false
+      - key: DB_NAME
+        value: laundry_pos
+      - key: DB_SSL
+        value: "true"
+      - key: WHATSAPP_ENABLED
+        value: "false"
